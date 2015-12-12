@@ -61,9 +61,18 @@ public class MainActivity extends ListActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 NewsEntity newsEntity = newsItemList.get(position);
-                String title = newsEntity.getTitle();
+                String imageUrl = "";
+
+                // If the piece of news has images
+                if (newsEntity.getMediaEntity().size() > 0) {
+                    imageUrl = newsEntity.getMediaEntity().get(0).getUrl();
+                }
+
                 Intent intent = new Intent(MainActivity.this, DetailViewActivity.class);
-                intent.putExtra("title", title);
+                intent.putExtra(DetailViewActivity.EXTRA_URL, newsEntity.getArticleUrl());
+                intent.putExtra(DetailViewActivity.EXTRA_TITLE, newsEntity.getTitle());
+                intent.putExtra(DetailViewActivity.EXTRA_SUMMARY, newsEntity.getTitle());
+                intent.putExtra(DetailViewActivity.EXTRA_IMAGE_URL, imageUrl);
                 startActivity(intent);
             }
         });

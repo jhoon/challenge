@@ -17,6 +17,10 @@ import com.facebook.imagepipeline.request.ImageRequest;
  */
 public class DetailViewActivity extends Activity {
     private String storyURL = "";
+    public static final String EXTRA_URL = "url";
+    public static final String EXTRA_TITLE = "title";
+    public static final String EXTRA_SUMMARY = "summary";
+    public static final String EXTRA_IMAGE_URL = "image_url";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,10 +28,10 @@ public class DetailViewActivity extends Activity {
         setContentView(R.layout.activity_detail);
 
         Bundle extras = getIntent().getExtras();
-        storyURL = extras.getString("storyURL");
-        String title = extras.getString("title");
-        String summary = extras.getString("summary");
-        String imageURL = extras.getString("imageURL");
+        storyURL = extras.getString(EXTRA_URL);
+        String title = extras.getString(EXTRA_TITLE);
+        String summary = extras.getString(EXTRA_SUMMARY);
+        String imageURL = extras.getString(EXTRA_IMAGE_URL);
 
         TextView titleView = (TextView) findViewById(R.id.title);
         DraweeView imageView = (DraweeView) findViewById(R.id.news_image);
