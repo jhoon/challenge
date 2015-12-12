@@ -2,6 +2,7 @@ package news.agoda.com.sample;
 
 import android.app.ListActivity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -35,25 +36,8 @@ public class MainActivity extends ListActivity {
         setContentView(R.layout.activity_main);
         Fresco.initialize(this);
 
-        newsItemList = new ArrayList<>();
-
-        String newsListSource = loadResource();
-        JSONObject jsonObject;
-
-        try {
-            jsonObject = new JSONObject(newsListSource);
-            JSONArray resultArray = jsonObject.getJSONArray("results");
-            for (int i = 0; i < resultArray.length(); i++) {
-                JSONObject newsObject = resultArray.getJSONObject(i);
-                NewsEntity newsEntity = new NewsEntity(newsObject);
-                newsItemList.add(newsEntity);
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "fail to parse json string");
-        }
-
-        NewsListAdapter adapter = new NewsListAdapter(this, R.layout.list_item_news, newsItemList);
-        setListAdapter(adapter);
+        // Let's load the JSON
+        new JSONTask().execute();
 
         ListView listView = getListView();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -118,5 +102,39 @@ public class MainActivity extends ListActivity {
         }
 
         return writer.toString();
+    }
+
+    private class JSONTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            newsItemList = new ArrayList<>();
+
+            String newsListSource = loadResource();
+            JSONObject jsonObject;
+
+            try {
+                jsonObject = new JSONObject(newsListSource);
+                JSONArray resultArray = jsonObject.getJSONArray("results");
+                for (int i = 0; i < resultArray.length(); i++) {
+                    JSONObject newsObject = resultArray.getJSONObject(i);
+                    NewsEntity newsEntity = new NewsEntity(newsObject);
+                    newsItemList.add(newsEntity);
+                }
+            } catch (JSONException e) {
+                Log.e(TAG, "fail to parse json string");
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            NewsListAdapter adapter = new NewsListAdapter(MainActivity.this,
+                    R.layout.list_item_news, newsItemList);
+            setListAdapter(adapter);
+        }
     }
 }
