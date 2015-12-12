@@ -30,8 +30,13 @@ public class NewsListAdapter extends ArrayAdapter {
         NewsEntity newsEntity = (NewsEntity) getItem(position);
         List<MediaEntity> mediaEntityList = newsEntity.getMediaEntity();
         String thumbnailURL = "";
-        MediaEntity mediaEntity = mediaEntityList.get(0);
-        thumbnailURL = mediaEntity.getUrl();
+        MediaEntity mediaEntity;
+
+        // Getting the thumbnail only when one is present
+        if (mediaEntityList.size() > 0) {
+            mediaEntity  = mediaEntityList.get(0);
+            thumbnailURL = mediaEntity.getUrl();
+        }
 
         ViewHolder viewHolder;
         if (convertView == null) {
@@ -45,9 +50,14 @@ public class NewsListAdapter extends ArrayAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.newsTitle.setText(newsEntity.getTitle());
-        DraweeController draweeController = Fresco.newDraweeControllerBuilder().setImageRequest(ImageRequest.fromUri
-                (Uri.parse(thumbnailURL))).setOldController(viewHolder.imageView.getController()).build();
-        viewHolder.imageView.setController(draweeController);
+
+        // If no thumbnail is there, there's no point on setting one.
+        if (!thumbnailURL.equals("")) {
+            DraweeController draweeController = Fresco.newDraweeControllerBuilder().setImageRequest(ImageRequest.fromUri
+                    (Uri.parse(thumbnailURL))).setOldController(viewHolder.imageView.getController()).build();
+            viewHolder.imageView.setController(draweeController);
+        }
+
         return convertView;
     }
 }
